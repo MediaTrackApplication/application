@@ -44,16 +44,7 @@ const items: TabsItem[] = [
     </template>
 
     <template #body>
-      <UPageSection :title="mediaGroup?.name" description="Manage media group.">
-        <!-- <template #links>
-          <UButton
-            color="neutral"
-            icon="i-lucide-circle-gauge"
-            size="xl"
-            label="Create new media meter"
-          />
-        </template> -->
-      </UPageSection>
+      <UPageSection :title="mediaGroup?.name" description="Manage media group." />
 
       <div class="mx-auto flex w-full flex-col gap-4 sm:gap-6 lg:max-w-2xl lg:gap-12">
         <UTabs :items="items" color="neutral">

@@ -143,7 +143,7 @@ const mediaGroups = computed(() =>
         <UButton
           color="neutral"
           icon="i-lucide-circle-gauge"
-          label="add your first metter"
+          label="add your first meter"
           size="sm"
           @click="modalMeter.open()"
         />
