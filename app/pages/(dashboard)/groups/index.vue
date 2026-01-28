@@ -62,8 +62,6 @@ const mediaGroups = computed(() =>
 
               <UBadge v-if="card.isDefault">default media group</UBadge>
             </div>
-
-            <!-- <p>{{ card?.description }}</p> -->
           </template>
         </UPageCard>
       </UPageGrid>

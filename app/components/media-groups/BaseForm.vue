@@ -29,6 +29,14 @@ const schema = z.object({
 
 const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
   if (mediaGroup) {
+    if (
+      mediaGroup.default_reading_day === payload.data.default_reading_day &&
+      mediaGroup.description === payload.data.description &&
+      mediaGroup.is_default === payload.data.is_default &&
+      mediaGroup.name === payload.data.name
+    )
+      return
+
     await mediaGroupsStore.updateMediaGroup({
       default_reading_day: payload.data.default_reading_day,
       description: payload.data.description,

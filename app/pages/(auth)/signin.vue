@@ -14,7 +14,7 @@ useSeoMeta({
 
 const supabase = useSupabaseClient()
 
-const authErro = ref('')
+const authError = ref('')
 
 const fields = [
   {
@@ -45,7 +45,7 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
     password: payload.data.password,
   })
 
-  if (error) authErro.value = error.message
+  if (error) authError.value = error.message
   if (data) navigateTo('/')
 }
 </script>
@@ -60,8 +60,13 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
       <ULink to="/" class="font-medium text-primary" tabindex="-1">Forgot password?</ULink>
     </template>
 
-    <template v-if="authErro" #validation>
-      <UAlert class="my-4" color="error" icon="i-lucide-message-circle-warning" :title="authErro" />
+    <template v-if="authError" #validation>
+      <UAlert
+        class="my-4"
+        color="error"
+        icon="i-lucide-message-circle-warning"
+        :title="authError"
+      />
     </template>
 
     <template #footer>

@@ -61,7 +61,7 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
     },
   })
 
-  if (error) return console.log({ error })
+  if (error) return console.error({ error })
   if (data) navigateTo('/signin')
 }
 </script>

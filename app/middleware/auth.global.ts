@@ -10,10 +10,9 @@ export default defineNuxtRouteMiddleware(async to => {
   if (session.value && !mediaGroupsStore.areMediaGroupsLoaded) {
     try {
       await mediaGroupsStore.fetchMediaGroups(true)
-    } catch {
+    } catch (error) {
+      console.error('Failed to fetch media groups in auth middleware:', error)
       return navigateTo('/')
     }
   }
-
-  return
 })

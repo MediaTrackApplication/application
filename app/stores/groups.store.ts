@@ -1,7 +1,12 @@
 import { defineStore } from 'pinia'
 
 import type { MediaGroup } from '~/types/media-group.type'
-import { SUPABASE_FUNCTIONS } from '~/types/supabase.type'
+import {
+  SUPABASE_FUNCTIONS,
+  type CreateMediaGroupParams,
+  type UpdateMediaGroupParams,
+  type DeleteMediaGroupParams,
+} from '~/types/supabase.type'
 
 export const useMediaGroupsStore = defineStore(
   'media-groups',
@@ -47,11 +52,13 @@ export const useMediaGroupsStore = defineStore(
     const createMediaGroup = async (payload: Partial<MediaGroup>) => {
       const supabase = useSupabaseClient()
 
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaGroup, {
+      const params: CreateMediaGroupParams = {
         p_description: payload.description || '',
-        p_is_default: payload.is_default || true,
+        p_is_default: payload.is_default ?? true,
         p_name: payload.name!,
-      } as any)
+      }
+
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaGroup, params)
 
       if (error) throw error
       if (data) return await fetchMediaGroups(true)
@@ -60,9 +67,11 @@ export const useMediaGroupsStore = defineStore(
     const deleteMediaGroup = async (mediaGroupId: string) => {
       const supabase = useSupabaseClient()
 
-      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, {
+      const params: DeleteMediaGroupParams = {
         p_group_id: mediaGroupId,
-      } as any)
+      }
+
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, params)
 
       if (error) throw error
       return await fetchMediaGroups(true)
@@ -71,13 +80,15 @@ export const useMediaGroupsStore = defineStore(
     const updateMediaGroup = async (payload: Partial<MediaGroup>) => {
       const supabase = useSupabaseClient()
 
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaGroup, {
+      const params: UpdateMediaGroupParams = {
         p_default_reading_day: payload.default_reading_day || 10,
         p_description: payload.description || '',
-        p_group_id: payload.id,
-        p_is_default: payload.is_default || false,
-        p_name: payload.name,
-      } as any)
+        p_group_id: payload.id!,
+        p_is_default: payload.is_default ?? false,
+        p_name: payload.name!,
+      }
+
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaGroup, params)
 
       if (error) throw error
       if (data) return await fetchMediaGroups(true)
