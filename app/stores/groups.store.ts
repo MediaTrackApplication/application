@@ -40,7 +40,7 @@ export const useMediaGroupsStore = defineStore(
         const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.fetchMediaGroups).single()
         if (error) throw error
 
-        mediaGroups.value = data
+        mediaGroups.value = Array.isArray(data) ? (data as unknown as MediaGroup[]) : undefined
         areMediaGroupsLoaded.value = true
       } catch (error) {
         mediaGroups.value = undefined
