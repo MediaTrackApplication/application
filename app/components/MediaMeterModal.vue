@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import * as z from 'zod'
 
-import type { FormSubmitEvent } from '@nuxt/ui'
 import type { MediaMeter, MediaMeterType } from '~/types/media-meter.type'
 import { MEDIA_METER_CONFIG, MEDIA_METER_TYPES } from '~/types/media-meter.type'
 
@@ -43,10 +42,7 @@ const setUnit = () => {
   if (state.type && MEDIA_METER_CONFIG[state.type]) state.unit = MEDIA_METER_CONFIG[state.type].unit
 }
 
-const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
-  // TODO: implement media meter submission handling
-  console.log('Submitting media meter:', payload)
-}
+const onSubmit = async () => {}
 </script>
 
 <template>
