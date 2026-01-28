@@ -1,33 +1,46 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   modules: [
-    '@nuxt/eslint',
-    '@nuxt/ui',
     '@nuxt/a11y',
+    '@nuxt/eslint',
     '@nuxt/hints',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@nuxt/test-utils'
+    '@nuxt/test-utils',
+    '@nuxt/ui',
+    '@nuxtjs/supabase',
+    '@pinia/nuxt',
+    'pinia-plugin-persistedstate/nuxt',
   ],
 
   devtools: {
-    enabled: true
+    enabled: true,
   },
 
   css: ['~/assets/css/main.css'],
 
   routeRules: {
-    '/': { prerender: true }
+    '/': { prerender: true },
   },
 
   compatibilityDate: '2025-01-15',
 
   eslint: {
     config: {
-      stylistic: {
-        commaDangle: 'never',
-        braceStyle: '1tbs'
-      }
-    }
-  }
+      stylistic: false,
+    },
+  },
+
+  ssr: false,
+
+  supabase: {
+    redirectOptions: {
+      callback: '/confirm',
+      exclude: ['/signup'],
+      include: undefined,
+      login: '/signin',
+      saveRedirectToCookie: false,
+    },
+    types: '~/types/database.types.ts',
+  },
 })
