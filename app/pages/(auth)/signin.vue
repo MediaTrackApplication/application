@@ -1,0 +1,72 @@
+<script setup lang="ts">
+import * as z from 'zod'
+
+import type { FormSubmitEvent } from '@nuxt/ui'
+
+definePageMeta({
+  layout: 'auth',
+})
+
+useSeoMeta({
+  description: 'Sign in to your account to continue',
+  title: 'Sign in',
+})
+
+const supabase = useSupabaseClient()
+
+const authErro = ref('')
+
+const fields = [
+  {
+    label: 'Email',
+    name: 'email',
+    placeholder: 'Enter your email',
+    required: true,
+    type: 'text',
+  },
+  {
+    label: 'Password',
+    name: 'password',
+    placeholder: 'Enter your password',
+    type: 'password',
+  },
+]
+
+const schema = z.object({
+  email: z.email('Invalid email'),
+  password: z.string().min(8, 'Must be at least 8 characters'),
+})
+
+type Schema = z.output<typeof schema>
+
+const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email: payload.data.email,
+    password: payload.data.password,
+  })
+
+  if (error) authErro.value = error.message
+  if (data) navigateTo('/')
+}
+</script>
+
+<template>
+  <UAuthForm :fields :schema title="Welcome back" icon="i-lucide-lock" @submit="onSubmit">
+    <template #description>
+      Don't have an account? <ULink to="/signup" class="font-medium text-primary">Sign up</ULink>.
+    </template>
+
+    <template #password-hint>
+      <ULink to="/" class="font-medium text-primary" tabindex="-1">Forgot password?</ULink>
+    </template>
+
+    <template v-if="authErro" #validation>
+      <UAlert class="my-4" color="error" icon="i-lucide-message-circle-warning" :title="authErro" />
+    </template>
+
+    <template #footer>
+      By signing in, you agree to our
+      <ULink to="/" class="font-medium text-primary">Terms of Service</ULink>.
+    </template>
+  </UAuthForm>
+</template>
