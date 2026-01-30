@@ -1,4 +1,3 @@
-// tslint:disable
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[]
 
 export type Database = {
@@ -76,6 +75,7 @@ export type Database = {
           name: string
           type: Database['public']['Enums']['media_meter_type']
           unit: string
+          updated_at: string
         }
         Insert: {
           created_at?: string | null
@@ -85,6 +85,7 @@ export type Database = {
           name: string
           type: Database['public']['Enums']['media_meter_type']
           unit: string
+          updated_at?: string
         }
         Update: {
           created_at?: string | null
@@ -94,6 +95,7 @@ export type Database = {
           name?: string
           type?: Database['public']['Enums']['media_meter_type']
           unit?: string
+          updated_at?: string
         }
         Relationships: [
           {
@@ -179,7 +181,22 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      create_media_meter: {
+        Args: {
+          p_description?: string
+          p_group_id: string
+          p_icon?: string
+          p_name: string
+          p_type: string
+          p_unit: string
+        }
+        Returns: string
+      }
       delete_media_group: { Args: { p_group_id: string }; Returns: undefined }
+      delete_media_meter: {
+        Args: { p_group_id: string; p_meter_id: string }
+        Returns: undefined
+      }
       get_user_groups_with_meters: { Args: never; Returns: Json }
       update_media_group: {
         Args: {
@@ -205,6 +222,17 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      update_media_meter: {
+        Args: {
+          p_description?: string
+          p_icon?: string
+          p_meter_id: string
+          p_name: string
+          p_type: string
+          p_unit: string
+        }
+        Returns: undefined
       }
     }
     Enums: {

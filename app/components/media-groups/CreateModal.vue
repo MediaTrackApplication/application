@@ -3,12 +3,12 @@ import type { MediaGroup } from '~/types/media-group.type'
 
 const emits = defineEmits<{ close: [boolean] }>()
 
-const props = defineProps<{
+const { mediaGroup = undefined } = defineProps<{
   mediaGroup?: MediaGroup
 }>()
 
 const title = computed(() =>
-  props.mediaGroup?.name ? `Edit media group: ${props.mediaGroup.name}` : 'Create new media group'
+  mediaGroup?.name ? `Edit media group: ${mediaGroup.name}` : 'Create new media group'
 )
 </script>
 
@@ -17,7 +17,7 @@ const title = computed(() =>
     <slot />
 
     <template #body>
-      <MediaGroupBaseForm :media-group="props.mediaGroup" />
+      <MediaGroupsBaseForm :media-group="mediaGroup" />
     </template>
   </UModal>
 </template>

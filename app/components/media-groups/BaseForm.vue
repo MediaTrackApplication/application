@@ -8,7 +8,7 @@ const { mediaGroup = undefined } = defineProps<{
   mediaGroup?: MediaGroup
 }>()
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 
 const state = reactive({
   default_reading_day: mediaGroup?.default_reading_day ?? 10,
@@ -37,7 +37,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
     )
       return
 
-    await mediaGroupsStore.updateMediaGroup({
+    await mediaTrackStore.updateMediaGroup({
       default_reading_day: payload.data.default_reading_day,
       description: payload.data.description,
       id: mediaGroup.id,
@@ -45,7 +45,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
       name: payload.data.name,
     })
   } else {
-    await mediaGroupsStore.createMediaGroup({
+    await mediaTrackStore.createMediaGroup({
       description: payload.data.description,
       is_default: payload.data.is_default,
       name: payload.data.name,
@@ -101,7 +101,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
 
       <UFormField
         :help="
-          mediaGroupsStore.isOneMediaGroup
+          mediaTrackStore.isOneMediaGroup
             ? 'Cannot disable default group when only one group exists.'
             : ''
         "
@@ -109,7 +109,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         label="Set as default group"
         description="Specifies whether this media group should be automatically selected as the default."
       >
-        <USwitch v-model="state.is_default" :disabled="mediaGroupsStore.isOneMediaGroup" />
+        <USwitch v-model="state.is_default" :disabled="mediaTrackStore.isOneMediaGroup" />
       </UFormField>
     </UPageCard>
 

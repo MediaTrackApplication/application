@@ -1,5 +1,5 @@
 export default defineNuxtRouteMiddleware(async to => {
-  const mediaGroupsStore = useMediaGroupsStore()
+  const mediaTrackStore = useMediaTrackStore()
   const session = useSupabaseSession()
 
   const authPages = ['/signin', '/signup']
@@ -7,9 +7,9 @@ export default defineNuxtRouteMiddleware(async to => {
   if (!session.value && !authPages.includes(to.path)) return navigateTo('/signin')
   if (session.value && authPages.includes(to.path)) return navigateTo('/')
 
-  if (session.value && !mediaGroupsStore.areMediaGroupsLoaded) {
+  if (session.value && !mediaTrackStore.areMediaGroupsLoaded) {
     try {
-      await mediaGroupsStore.fetchMediaGroups(true)
+      await mediaTrackStore.fetchMediaGroups(true)
     } catch (error) {
       console.error('Failed to fetch media groups in auth middleware:', error)
       return navigateTo('/')

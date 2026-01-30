@@ -1,8 +1,8 @@
 export default defineNuxtRouteMiddleware(async to => {
-  const mediaGroupsStore = useMediaGroupsStore()
+  const mediaTrackStore = useMediaTrackStore()
 
-  const groupId = to.params.id as string
-  const group = mediaGroupsStore.mediaGroups?.find(g => g.id === groupId)
+  const groupId = to.params.groupId as string
+  const group = mediaTrackStore.mediaGroups?.find(g => g.id === groupId)
 
   if (!group) return navigateTo('/groups')
 })

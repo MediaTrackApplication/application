@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { DropdownMenuItem } from '@nuxt/ui'
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 
 defineProps<{
   collapsed?: boolean
@@ -9,11 +9,11 @@ defineProps<{
 
 const items = computed<DropdownMenuItem[][]>(() => {
   return [
-    mediaGroupsStore.getMediaGroups?.map(group => ({
+    mediaTrackStore.getMediaGroups?.map(group => ({
       icon: 'i-lucide-diamond',
       label: group.name,
       onSelect: () => {
-        mediaGroupsStore.selectedMediaGroupId = group.id
+        mediaTrackStore.selectedMediaGroupId = group.id
       },
     })) || [],
     [
@@ -40,7 +40,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
     <UButton
       v-bind="{
         icon: 'i-lucide-diamond',
-        label: collapsed ? undefined : mediaGroupsStore?.getSelectedMediaGroup?.name,
+        label: collapsed ? undefined : mediaTrackStore?.getSelectedMediaGroup?.name,
         trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
       }"
       class="data-[state=open]:bg-elevated"
