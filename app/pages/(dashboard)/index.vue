@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { MEDIA_METER_CONFIG } from '~/types/media-meter.type'
+import { MEDIA_METER_CONFIG, type MediaMeterType } from '~/types/media-meter.type'
 
 import MediaMetersCreateModal from '~/components/media-meters/CreateModal.vue'
 
@@ -10,9 +10,9 @@ const modalMeter = overlay.create(MediaMetersCreateModal)
 
 const mediaGroups = computed(() =>
   mediaTrackStore.getSelectedMediaGroupMeters?.map(group => ({
-    color: MEDIA_METER_CONFIG[group.type]?.color,
+    color: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.color,
     description: group.description,
-    icon: MEDIA_METER_CONFIG[group.type]?.icon,
+    icon: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.icon,
     id: group.id,
     title: group.name,
     type: group.type,
@@ -97,7 +97,9 @@ const mediaGroups = computed(() =>
             <span class="text-xl">
               {{ card.title }}
               <span class="text-sm text-gray-400">measured in </span>
-              <span class="text-md text-gray-400">{{ MEDIA_METER_CONFIG[card.type]?.unit }}</span>
+              <span class="text-md text-gray-400">{{
+                MEDIA_METER_CONFIG[card.type as MediaMeterType]?.unit
+              }}</span>
             </span>
           </template>
 
