@@ -60,6 +60,6 @@ export interface MediaMeter {
   group_id?: string
   id?: string
   name: string
-  type: MediaMeterType
+  type: MediaMeterType | string
   unit: string
 }

@@ -22,7 +22,7 @@ const schema = z.object({
 const state = reactive({
   description: mediaMeter?.description || '',
   name: mediaMeter?.name || '',
-  type: (mediaMeter?.type || '') as MediaMeterType,
+  type: mediaMeter?.type || '',
   unit: mediaMeter?.unit || '',
 })
 
@@ -37,7 +37,8 @@ const items = computed(() =>
 const icon = computed(() => items.value.find(item => item.value === state.type)?.icon)
 
 const setUnit = () => {
-  if (state.type && MEDIA_METER_CONFIG[state.type]) state.unit = MEDIA_METER_CONFIG[state.type].unit
+  if (state.type && MEDIA_METER_CONFIG[state.type as MediaMeterType])
+    state.unit = MEDIA_METER_CONFIG[state.type as MediaMeterType].unit
 }
 
 const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
