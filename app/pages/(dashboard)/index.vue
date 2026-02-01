@@ -158,7 +158,11 @@ const mediaGroups = computed(() =>
           icon="i-lucide-circle-gauge"
           label="add your first meter"
           size="sm"
-          @click="modalMeter.open()"
+          @click="
+            modalMeter.open({
+              mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
+            })
+          "
         />
       </UAlert>
     </template>
