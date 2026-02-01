@@ -1,18 +1,18 @@
 <script setup lang="ts">
-import { MEDIA_METER_CONFIG } from '~/types/media-meter.type'
+import { MEDIA_METER_CONFIG, type MediaMeterType } from '~/types/media-meter.type'
 
-import MediaMeterModal from '~/components/MediaMeterModal.vue'
+import MediaMetersCreateModal from '~/components/media-meters/CreateModal.vue'
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 const overlay = useOverlay()
 
-const modalMeter = overlay.create(MediaMeterModal)
+const modalMeter = overlay.create(MediaMetersCreateModal)
 
 const mediaGroups = computed(() =>
-  mediaGroupsStore.getSelectedMediaGroupMeters?.map(group => ({
-    color: MEDIA_METER_CONFIG[group.type]?.color,
+  mediaTrackStore.getSelectedMediaGroupMeters?.map(group => ({
+    color: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.color,
     description: group.description,
-    icon: MEDIA_METER_CONFIG[group.type]?.icon,
+    icon: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.icon,
     id: group.id,
     title: group.name,
     type: group.type,
@@ -39,7 +39,7 @@ const mediaGroups = computed(() =>
         <UPageCard
           icon="i-lucide-diamond"
           :ui="{ leadingIcon: 'text-black' }"
-          :title="mediaGroupsStore.getSelectedMediaGroup?.name"
+          :title="mediaTrackStore.getSelectedMediaGroup?.name"
           spotlight-color="neutral"
           spotlight
         >
@@ -48,7 +48,7 @@ const mediaGroups = computed(() =>
               Default reading day:
 
               <UBadge color="neutral" size="md" class="ml-2">
-                {{ mediaGroupsStore.getSelectedMediaGroup?.default_reading_day || '10' }}
+                {{ mediaTrackStore.getSelectedMediaGroup?.default_reading_day || '10' }}
               </UBadge>
             </p>
           </template>
@@ -62,8 +62,8 @@ const mediaGroups = computed(() =>
                 size="sm"
                 variant="outline"
                 :to="{
-                  name: 'groups-id',
-                  params: { id: mediaGroupsStore.getSelectedMediaGroup?.id },
+                  name: 'groups-groupId',
+                  params: { groupId: mediaTrackStore.getSelectedMediaGroup?.id },
                 }"
               />
 
@@ -81,7 +81,7 @@ const mediaGroups = computed(() =>
       <USeparator class="my-8" icon="i-lucide-arrow-down-from-line" />
 
       <UPageGrid
-        v-if="mediaGroupsStore.getSelectedMediaGroupMeters?.length"
+        v-if="mediaTrackStore.getSelectedMediaGroupMeters?.length"
         class="grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
       >
         <UPageCard
@@ -97,7 +97,9 @@ const mediaGroups = computed(() =>
             <span class="text-xl">
               {{ card.title }}
               <span class="text-sm text-gray-400">measured in </span>
-              <span class="text-md text-gray-400">{{ MEDIA_METER_CONFIG[card.type]?.unit }}</span>
+              <span class="text-md text-gray-400">{{
+                MEDIA_METER_CONFIG[card.type as MediaMeterType]?.unit
+              }}</span>
             </span>
           </template>
 
@@ -109,6 +111,13 @@ const mediaGroups = computed(() =>
                 label="manage meter"
                 size="sm"
                 variant="outline"
+                :to="{
+                  name: 'groups-groupId-meters-meterId',
+                  params: {
+                    groupId: mediaTrackStore.getSelectedMediaGroup?.id,
+                    meterId: card.id,
+                  },
+                }"
               />
 
               <UButton
@@ -121,13 +130,17 @@ const mediaGroups = computed(() =>
           </template>
         </UPageCard>
 
-        <div class="ml-4 flex items-center">
+        <div class="flex h-full items-center justify-center">
           <UTooltip text="add new meter to the group">
             <UButton
               color="neutral"
               icon="i-lucide-circle-gauge"
               size="xl"
-              @click="modalMeter.open()"
+              @click="
+                modalMeter.open({
+                  mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
+                })
+              "
             />
           </UTooltip>
         </div>
@@ -145,7 +158,11 @@ const mediaGroups = computed(() =>
           icon="i-lucide-circle-gauge"
           label="add your first meter"
           size="sm"
-          @click="modalMeter.open()"
+          @click="
+            modalMeter.open({
+              mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
+            })
+          "
         />
       </UAlert>
     </template>

@@ -15,7 +15,6 @@ export const MEDIA_METER_CONFIG = {
     key: MEDIA_METER_TYPES.electricity,
     unit: 'kWh',
   },
-
   [MEDIA_METER_TYPES.water]: {
     color: 'info',
     icon: 'i-lucide-droplet',
@@ -34,21 +33,18 @@ export const MEDIA_METER_CONFIG = {
     key: MEDIA_METER_TYPES.hot_water,
     unit: 'm³',
   },
-
   [MEDIA_METER_TYPES.gas]: {
     color: 'error',
     icon: 'i-lucide-flame',
     key: MEDIA_METER_TYPES.gas,
     unit: 'm³',
   },
-
   [MEDIA_METER_TYPES.heat]: {
     color: 'error',
     icon: 'i-lucide-thermometer',
     key: MEDIA_METER_TYPES.heat,
     unit: 'GJ',
   },
-
   [MEDIA_METER_TYPES.other]: {
     color: 'primary',
     key: MEDIA_METER_TYPES.other,
@@ -61,9 +57,9 @@ export type MediaMeterType = keyof typeof MEDIA_METER_TYPES
 
 export interface MediaMeter {
   description?: string
-  icon?: string
+  group_id?: string
   id?: string
   name: string
-  type: MediaMeterType
+  type: MediaMeterType | string
   unit: string
 }

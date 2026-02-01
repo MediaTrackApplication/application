@@ -1,23 +1,30 @@
 import { defineStore } from 'pinia'
 
 import type { MediaGroup } from '~/types/media-group.type'
+import type { MediaMeter } from '~/types/media-meter.type'
 import {
   SUPABASE_FUNCTIONS,
   type CreateMediaGroupParams,
   type UpdateMediaGroupParams,
   type DeleteMediaGroupParams,
+  type CreateMediaMeterParams,
+  type UpdateMediaMeterParams,
+  type DeleteMediaMeterParams,
 } from '~/types/supabase.type'
 
-export const useMediaGroupsStore = defineStore(
-  'media-groups',
+export const useMediaTrackStore = defineStore(
+  'media-track',
   () => {
     // States
     const areMediaGroupsLoaded = ref(false)
     const mediaGroups = ref<MediaGroup[]>()
+    const mediaMeter = ref<MediaMeter>()
     const selectedMediaGroupId = ref<string>()
 
     // Getters
     const getMediaGroups = computed(() => mediaGroups.value)
+
+    const getMediaMeter = computed(() => mediaMeter.value)
 
     const getSelectedMediaGroup = computed(() =>
       mediaGroups.value?.find(group =>
@@ -94,6 +101,54 @@ export const useMediaGroupsStore = defineStore(
       if (data) return await fetchMediaGroups(true)
     }
 
+    const createMediaMeter = async (payload: Partial<MediaMeter>) => {
+      const supabase = useSupabaseClient()
+
+      const params: CreateMediaMeterParams = {
+        p_group_id: payload.group_id!,
+        p_name: payload.name!,
+        p_type: payload.type!,
+        p_unit: payload.unit || '',
+        p_description: payload.description || '',
+      }
+
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaMeter, params)
+
+      if (error) throw error
+      if (data) return await fetchMediaGroups(true)
+    }
+
+    const updateMediaMeter = async (payload: Partial<MediaMeter>) => {
+      const supabase = useSupabaseClient()
+
+      const params: UpdateMediaMeterParams = {
+        p_meter_id: payload.id!,
+        p_name: payload.name!,
+        p_type: payload.type!,
+        p_unit: payload.unit || '',
+        p_description: payload.description || '',
+      }
+
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaMeter, params)
+
+      if (error) throw error
+      if (data) return await fetchMediaGroups(true)
+    }
+
+    const deleteMediaMeter = async (mediaGroupId: string, mediaMeterId: string) => {
+      const supabase = useSupabaseClient()
+
+      const params: DeleteMediaMeterParams = {
+        p_group_id: mediaGroupId,
+        p_meter_id: mediaMeterId,
+      }
+
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaMeter, params)
+
+      if (error) throw error
+      return await fetchMediaGroups(true)
+    }
+
     return {
       // States
       areMediaGroupsLoaded,
@@ -101,6 +156,7 @@ export const useMediaGroupsStore = defineStore(
       selectedMediaGroupId,
 
       // Getters
+      getMediaMeter,
       getMediaGroups,
       getSelectedMediaGroup,
       getSelectedMediaGroupMeters,
@@ -108,9 +164,12 @@ export const useMediaGroupsStore = defineStore(
 
       // Actions
       createMediaGroup,
+      createMediaMeter,
       deleteMediaGroup,
       fetchMediaGroups,
       updateMediaGroup,
+      updateMediaMeter,
+      deleteMediaMeter,
     }
   },
   {

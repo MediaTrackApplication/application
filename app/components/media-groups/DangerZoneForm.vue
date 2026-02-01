@@ -5,11 +5,11 @@ const { mediaGroup = undefined } = defineProps<{
   mediaGroup?: MediaGroup
 }>()
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 
 const onSubmit = async () => {
   if (mediaGroup) {
-    await mediaGroupsStore.deleteMediaGroup(mediaGroup.id as string)
+    await mediaTrackStore.deleteMediaGroup(mediaGroup.id as string)
   }
 }
 </script>
@@ -24,11 +24,11 @@ const onSubmit = async () => {
   >
     <template #footer>
       <UTooltip
-        :disabled="!mediaGroupsStore.isOneMediaGroup"
+        :disabled="!mediaTrackStore.isOneMediaGroup"
         text="Cannot be deleted. You must have at least one media group."
       >
         <UButton
-          :disabled="mediaGroupsStore.isOneMediaGroup"
+          :disabled="mediaTrackStore.isOneMediaGroup"
           color="error"
           label="Delete"
           size="lg"

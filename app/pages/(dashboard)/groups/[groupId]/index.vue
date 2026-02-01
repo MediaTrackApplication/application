@@ -5,11 +5,11 @@ definePageMeta({
   middleware: ['media-group'],
 })
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 
 const mediaGroup = computed(() => {
-  const groupId = useRoute().params.id as string
-  return mediaGroupsStore.mediaGroups?.find(g => g.id === groupId)
+  const groupId = useRoute().params.groupId as string
+  return mediaTrackStore.mediaGroups?.find(g => g.id === groupId)
 })
 
 const items: TabsItem[] = [

@@ -1,21 +1,21 @@
 <script setup lang="ts">
 import MediaGroupsCreateModal from '~/components/media-groups/CreateModal.vue'
 
-const mediaGroupsStore = useMediaGroupsStore()
+const mediaTrackStore = useMediaTrackStore()
 const overlay = useOverlay()
 
 const modal = overlay.create(MediaGroupsCreateModal)
 
 const mediaGroups = computed(() =>
-  mediaGroupsStore.mediaGroups?.map(group => ({
+  mediaTrackStore.mediaGroups?.map(group => ({
     description: group.description,
     icon: 'i-lucide-grid-2x2-check',
     id: group.id,
     isDefault: group.is_default,
     title: group.name,
     to: {
-      name: 'groups-id',
-      params: { id: group.id },
+      name: 'groups-groupId',
+      params: { groupId: group.id },
     },
   }))
 )
@@ -53,10 +53,7 @@ const mediaGroups = computed(() =>
         <UPageCard v-for="(card, index) in mediaGroups" :key="index" v-bind="card" spotlight>
           <template #default>
             <div class="inline-flex gap-2">
-              <UBadge
-                v-if="mediaGroupsStore.getSelectedMediaGroup?.id === card?.id"
-                color="warning"
-              >
+              <UBadge v-if="mediaTrackStore.getSelectedMediaGroup?.id === card?.id" color="warning">
                 current media group
               </UBadge>
 
