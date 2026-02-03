@@ -23,6 +23,7 @@
   "dependencies": {
     "@iconify-json/lucide": "^1.2.87",
     "@iconify-json/simple-icons": "^1.2.67",
+    "@internationalized/date": "^3.10.1",
     "@nuxt/a11y": "1.0.0-alpha.1",
     "@nuxt/hints": "1.0.0-alpha.5",
     "@nuxt/image": "2.0.0",

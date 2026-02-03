@@ -2,14 +2,17 @@
 import { MEDIA_METER_CONFIG, type MediaMeterType } from '~/types/media-meter.type'
 
 import MediaMetersCreateModal from '~/components/media-meters/CreateModal.vue'
+import MediaReadingsAddReadingModal from '~/components/media-readings/AddReadingModal.vue'
 
 const mediaTrackStore = useMediaTrackStore()
 const overlay = useOverlay()
 
 const modalMeter = overlay.create(MediaMetersCreateModal)
+const modalReading = overlay.create(MediaReadingsAddReadingModal)
 
-const mediaGroups = computed(() =>
+const medisMeters = computed(() =>
   mediaTrackStore.getSelectedMediaGroupMeters?.map(group => ({
+    ...group,
     color: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.color,
     description: group.description,
     icon: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.icon,
@@ -85,7 +88,7 @@ const mediaGroups = computed(() =>
         class="grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
       >
         <UPageCard
-          v-for="(card, index) in mediaGroups"
+          v-for="(card, index) in medisMeters"
           :key="index"
           :spotlight-color="card.color"
           :ui="{ leadingIcon: 'text-' + card.color }"
@@ -125,6 +128,7 @@ const mediaGroups = computed(() =>
                 icon="i-lucide-notebook-pen"
                 label="add meters reading"
                 size="sm"
+                @click="modalReading.open({ mediaMeter: card })"
               />
             </div>
           </template>

@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 
 import type { MediaGroup } from '~/types/media-group.type'
 import type { MediaMeter } from '~/types/media-meter.type'
+import type { MediaReading } from '~/types/media-reading.type'
 import {
   SUPABASE_FUNCTIONS,
   type CreateMediaGroupParams,
@@ -10,6 +11,7 @@ import {
   type CreateMediaMeterParams,
   type UpdateMediaMeterParams,
   type DeleteMediaMeterParams,
+  type UpsertMediaMeterReadingParams,
 } from '~/types/supabase.type'
 
 export const useMediaTrackStore = defineStore(
@@ -71,19 +73,6 @@ export const useMediaTrackStore = defineStore(
       if (data) return await fetchMediaGroups(true)
     }
 
-    const deleteMediaGroup = async (mediaGroupId: string) => {
-      const supabase = useSupabaseClient()
-
-      const params: DeleteMediaGroupParams = {
-        p_group_id: mediaGroupId,
-      }
-
-      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, params)
-
-      if (error) throw error
-      return await fetchMediaGroups(true)
-    }
-
     const updateMediaGroup = async (payload: Partial<MediaGroup>) => {
       const supabase = useSupabaseClient()
 
@@ -99,6 +88,19 @@ export const useMediaTrackStore = defineStore(
 
       if (error) throw error
       if (data) return await fetchMediaGroups(true)
+    }
+
+    const deleteMediaGroup = async (mediaGroupId: string) => {
+      const supabase = useSupabaseClient()
+
+      const params: DeleteMediaGroupParams = {
+        p_group_id: mediaGroupId,
+      }
+
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, params)
+
+      if (error) throw error
+      return await fetchMediaGroups(true)
     }
 
     const createMediaMeter = async (payload: Partial<MediaMeter>) => {
@@ -149,6 +151,24 @@ export const useMediaTrackStore = defineStore(
       return await fetchMediaGroups(true)
     }
 
+    const upsertMediaMeterReading = async (payload: Partial<MediaReading>) => {
+      const supabase = useSupabaseClient()
+
+      console.log('Submitting meter reading form...', payload)
+
+      const params: UpsertMediaMeterReadingParams = {
+        p_meter_id: payload.meter_id!,
+        p_reading_day: payload.reading_day!,
+        p_reading_month: payload.reading_month!,
+        p_reading_value: payload.reading_value!,
+      }
+
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.upsertMediaMeterReading, params)
+
+      if (error) throw error
+      return await fetchMediaGroups(true)
+    }
+
     return {
       // States
       areMediaGroupsLoaded,
@@ -156,8 +176,8 @@ export const useMediaTrackStore = defineStore(
       selectedMediaGroupId,
 
       // Getters
-      getMediaMeter,
       getMediaGroups,
+      getMediaMeter,
       getSelectedMediaGroup,
       getSelectedMediaGroupMeters,
       isOneMediaGroup,
@@ -166,10 +186,11 @@ export const useMediaTrackStore = defineStore(
       createMediaGroup,
       createMediaMeter,
       deleteMediaGroup,
+      deleteMediaMeter,
       fetchMediaGroups,
       updateMediaGroup,
       updateMediaMeter,
-      deleteMediaMeter,
+      upsertMediaMeterReading,
     }
   },
   {

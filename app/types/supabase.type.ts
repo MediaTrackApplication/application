@@ -8,6 +8,8 @@ export const SUPABASE_FUNCTIONS = {
   createMediaMeter: 'create_media_meter',
   deleteMediaMeter: 'delete_media_meter',
   updateMediaMeter: 'update_media_meter',
+
+  upsertMediaMeterReading: 'upsert_media_reading',
 } as const
 
 export interface CreateMediaGroupParams {
@@ -47,4 +49,11 @@ export interface UpdateMediaMeterParams {
 export interface DeleteMediaMeterParams {
   p_group_id: string
   p_meter_id: string
+}
+
+export interface UpsertMediaMeterReadingParams {
+  p_meter_id: string
+  p_reading_month: string
+  p_reading_day: number
+  p_reading_value: number
 }
