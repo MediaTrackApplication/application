@@ -6,5 +6,5 @@ export interface MediaGroup {
   id?: string
   is_default?: boolean
   meters?: MediaMeter[]
-  name: string
+  name?: string
 }

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { NavigationMenuItem } from '@nuxt/ui'
 
 const route = useRoute()
@@ -86,12 +86,12 @@ onMounted(async () => {
 <template>
   <UDashboardGroup unit="rem">
     <UDashboardSidebar
+      class="bg-elevated/25"
       id="default"
       v-model:open="open"
+      :ui="{ footer: 'lg:border-t lg:border-default' }"
       collapsible
       resizable
-      class="bg-elevated/25"
-      :ui="{ footer: 'lg:border-t lg:border-default' }"
     >
       <template #header="{ collapsed }">
         <MediaGroupsMenu :collapsed="collapsed" />
@@ -102,16 +102,16 @@ onMounted(async () => {
           :collapsed="collapsed"
           :items="links[0]"
           orientation="vertical"
-          tooltip
           popover
+          tooltip
         />
 
         <UNavigationMenu
+          class="mt-auto"
           :collapsed="collapsed"
           :items="links[1]"
           orientation="vertical"
           tooltip
-          class="mt-auto"
         />
       </template>
 

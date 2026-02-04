@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { MediaGroup } from '~/types/media-group.type'
 
 const emits = defineEmits<{ close: [boolean] }>()
@@ -13,11 +13,11 @@ const title = computed(() =>
 </script>
 
 <template>
-  <UModal overlay :title :close="{ onClick: () => emits('close', false) }">
+  <UModal :close="{ onClick: () => emits('close', false) }" :title overlay>
     <slot />
 
     <template #body>
-      <MediaGroupsBaseForm :media-group="mediaGroup" />
+      <MediaGroupsBaseForm :media-group="mediaGroup" @close="emits('close', false)" />
     </template>
   </UModal>
 </template>

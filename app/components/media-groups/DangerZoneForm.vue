@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { MediaGroup } from '~/types/media-group.type'
 
 const { mediaGroup = undefined } = defineProps<{
@@ -29,11 +29,11 @@ const onSubmit = async () => {
       >
         <UButton
           :disabled="mediaTrackStore.isOneMediaGroup"
+          @click="onSubmit"
           color="error"
           label="Delete"
           size="lg"
           trailing-icon="i-lucide-diamond-minus"
-          @click="onSubmit"
         />
       </UTooltip>
     </template>

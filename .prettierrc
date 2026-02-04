@@ -1,5 +1,6 @@
 {
   "arrowParens": "avoid",
+  "attributeSort": "ASC",
   "bracketSameLine": false,
   "bracketSpacing": true,
   "endOfLine": "lf",
@@ -11,6 +12,6 @@
   "trailingComma": "es5",
   "useTabs": false,
   "vueIndentScriptAndStyle": false,
-  "plugins": ["prettier-plugin-tailwindcss"],
+  "plugins": ["prettier-plugin-organize-attributes", "prettier-plugin-tailwindcss"],
   "tailwindStylesheet": "./app/assets/css/main.css"
 }

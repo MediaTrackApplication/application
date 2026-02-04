@@ -1,7 +1,8 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { DropdownMenuItem } from '@nuxt/ui'
 
 const mediaTrackStore = useMediaTrackStore()
+const router = useRouter()
 
 defineProps<{
   collapsed?: boolean
@@ -14,6 +15,7 @@ const items = computed<DropdownMenuItem[][]>(() => {
       label: group.name,
       onSelect: () => {
         mediaTrackStore.selectedMediaGroupId = group.id
+        router.push('/')
       },
     })) || [],
     [
@@ -38,20 +40,20 @@ const items = computed<DropdownMenuItem[][]>(() => {
     :ui="{ content: collapsed ? 'w-40' : 'w-(--reka-dropdown-menu-trigger-width)' }"
   >
     <UButton
+      class="data-[state=open]:bg-elevated"
       v-bind="{
         icon: 'i-lucide-diamond',
         label: collapsed ? undefined : mediaTrackStore?.getSelectedMediaGroup?.name,
         trailingIcon: collapsed ? undefined : 'i-lucide-chevrons-up-down',
       }"
-      class="data-[state=open]:bg-elevated"
-      color="neutral"
-      variant="ghost"
-      block
-      :square="collapsed"
       :class="[!collapsed && 'py-2']"
+      :square="collapsed"
       :ui="{
         trailingIcon: 'text-dimmed',
       }"
+      block
+      color="neutral"
+      variant="ghost"
     />
   </UDropdownMenu>
 </template>

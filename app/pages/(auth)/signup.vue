@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as z from 'zod'
 import type { FormSubmitEvent } from '@nuxt/ui'
 
@@ -70,17 +70,17 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
   <UAuthForm
     :fields
     :schema
-    title="Create an account"
     :submit="{ label: 'Create account' }"
     @submit="onSubmit"
+    title="Create an account"
   >
     <template #description>
-      Already have an account? <ULink to="/login" class="font-medium text-primary">Login</ULink>.
+      Already have an account? <ULink class="font-medium text-primary" to="/login">Login</ULink>.
     </template>
 
     <template #footer>
       By signing up, you agree to our
-      <ULink to="/" class="font-medium text-primary">Terms of Service</ULink>.
+      <ULink class="font-medium text-primary" to="/">Terms of Service</ULink>.
     </template>
   </UAuthForm>
 </template>

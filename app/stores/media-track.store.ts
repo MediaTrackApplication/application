@@ -3,23 +3,14 @@ import { defineStore } from 'pinia'
 import type { MediaGroup } from '~/types/media-group.type'
 import type { MediaMeter } from '~/types/media-meter.type'
 import type { MediaReading } from '~/types/media-reading.type'
-import {
-  SUPABASE_FUNCTIONS,
-  type CreateMediaGroupParams,
-  type UpdateMediaGroupParams,
-  type DeleteMediaGroupParams,
-  type CreateMediaMeterParams,
-  type UpdateMediaMeterParams,
-  type DeleteMediaMeterParams,
-  type UpsertMediaMeterReadingParams,
-} from '~/types/supabase.type'
+import { SUPABASE_FUNCTIONS } from '~/types/supabase.type'
 
 export const useMediaTrackStore = defineStore(
   'media-track',
   () => {
     // States
     const areMediaGroupsLoaded = ref(false)
-    const mediaGroups = ref<MediaGroup[]>()
+    const mediaGroups = ref<MediaGroup[]>([])
     const mediaMeter = ref<MediaMeter>()
     const selectedMediaGroupId = ref<string>()
 
@@ -28,11 +19,15 @@ export const useMediaTrackStore = defineStore(
 
     const getMediaMeter = computed(() => mediaMeter.value)
 
-    const getSelectedMediaGroup = computed(() =>
-      mediaGroups.value?.find(group =>
-        selectedMediaGroupId.value ? group.id === selectedMediaGroupId.value : group.is_default
+    const getSelectedMediaGroup = computed(() => {
+      if (!mediaGroups.value.length) return undefined
+
+      return (
+        mediaGroups.value.find(g => g.id === selectedMediaGroupId.value) ??
+        mediaGroups.value.find(g => g.is_default) ??
+        mediaGroups.value[0]
       )
-    )
+    })
 
     const getSelectedMediaGroupMeters = computed(() =>
       getSelectedMediaGroup.value ? getSelectedMediaGroup.value.meters : []
@@ -41,132 +36,116 @@ export const useMediaTrackStore = defineStore(
     const isOneMediaGroup = computed(() => mediaGroups.value?.length === 1)
 
     // Actions
-    const fetchMediaGroups = async (hardLoad = false) => {
+    const fetchUserMediaData = async (hardLoad = false) => {
       if (areMediaGroupsLoaded.value && !hardLoad) return
 
       try {
         const supabase = useSupabaseClient()
-        const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.fetchMediaGroups).single()
+        const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.fetchUserMediaData).single()
         if (error) throw error
 
-        mediaGroups.value = Array.isArray(data) ? (data as unknown as MediaGroup[]) : undefined
+        mediaGroups.value = Array.isArray(data) ? (data as unknown as MediaGroup[]) : []
         areMediaGroupsLoaded.value = true
       } catch (error) {
-        mediaGroups.value = undefined
+        mediaGroups.value = []
         areMediaGroupsLoaded.value = false
         throw error
       }
     }
 
-    const createMediaGroup = async (payload: Partial<MediaGroup>) => {
+    // Media Group Actions
+    const createMediaGroup = async (p_payload: Partial<MediaGroup>) => {
       const supabase = useSupabaseClient()
 
-      const params: CreateMediaGroupParams = {
-        p_description: payload.description || '',
-        p_is_default: payload.is_default ?? true,
-        p_name: payload.name!,
-      }
-
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaGroup, params)
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaGroup, {
+        p_payload,
+      })
 
       if (error) throw error
-      if (data) return await fetchMediaGroups(true)
+      if (data) return await fetchUserMediaData(true)
     }
 
-    const updateMediaGroup = async (payload: Partial<MediaGroup>) => {
+    const updateMediaGroup = async (p_payload: Partial<MediaGroup>) => {
       const supabase = useSupabaseClient()
 
-      const params: UpdateMediaGroupParams = {
-        p_default_reading_day: payload.default_reading_day || 10,
-        p_description: payload.description || '',
-        p_group_id: payload.id!,
-        p_is_default: payload.is_default ?? false,
-        p_name: payload.name!,
-      }
-
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaGroup, params)
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaGroup, {
+        p_payload,
+      })
 
       if (error) throw error
-      if (data) return await fetchMediaGroups(true)
+      if (data) return await fetchUserMediaData(true)
     }
 
-    const deleteMediaGroup = async (mediaGroupId: string) => {
+    const deleteMediaGroup = async (id: string) => {
       const supabase = useSupabaseClient()
 
-      const params: DeleteMediaGroupParams = {
-        p_group_id: mediaGroupId,
-      }
-
-      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, params)
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaGroup, {
+        p_payload: {
+          id,
+        },
+      })
 
       if (error) throw error
-      return await fetchMediaGroups(true)
+      return await fetchUserMediaData(true)
     }
 
-    const createMediaMeter = async (payload: Partial<MediaMeter>) => {
+    // Media Meter Actions
+    const createMediaMeter = async (p_payload: Partial<MediaMeter>) => {
       const supabase = useSupabaseClient()
 
-      const params: CreateMediaMeterParams = {
-        p_group_id: payload.group_id!,
-        p_name: payload.name!,
-        p_type: payload.type!,
-        p_unit: payload.unit || '',
-        p_description: payload.description || '',
-      }
-
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaMeter, params)
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaMeter, {
+        p_payload,
+      })
 
       if (error) throw error
-      if (data) return await fetchMediaGroups(true)
+      if (data) return await fetchUserMediaData(true)
     }
 
-    const updateMediaMeter = async (payload: Partial<MediaMeter>) => {
+    const updateMediaMeter = async (p_payload: Partial<MediaMeter>) => {
       const supabase = useSupabaseClient()
 
-      const params: UpdateMediaMeterParams = {
-        p_meter_id: payload.id!,
-        p_name: payload.name!,
-        p_type: payload.type!,
-        p_unit: payload.unit || '',
-        p_description: payload.description || '',
-      }
-
-      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaMeter, params)
+      const { data, error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaMeter, {
+        p_payload,
+      })
 
       if (error) throw error
-      if (data) return await fetchMediaGroups(true)
+      if (data) return await fetchUserMediaData(true)
     }
 
-    const deleteMediaMeter = async (mediaGroupId: string, mediaMeterId: string) => {
+    const deleteMediaMeter = async (id: string) => {
       const supabase = useSupabaseClient()
 
-      const params: DeleteMediaMeterParams = {
-        p_group_id: mediaGroupId,
-        p_meter_id: mediaMeterId,
-      }
-
-      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaMeter, params)
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.deleteMediaMeter, {
+        p_payload: {
+          id,
+        },
+      })
 
       if (error) throw error
-      return await fetchMediaGroups(true)
+      return await fetchUserMediaData(true)
     }
 
-    const upsertMediaMeterReading = async (payload: Partial<MediaReading>) => {
+    // Media Meter Reading Actions
+    const createMediaReading = async (p_payload: Partial<MediaReading>) => {
       const supabase = useSupabaseClient()
 
-      console.log('Submitting meter reading form...', payload)
-
-      const params: UpsertMediaMeterReadingParams = {
-        p_meter_id: payload.meter_id!,
-        p_reading_day: payload.reading_day!,
-        p_reading_month: payload.reading_month!,
-        p_reading_value: payload.reading_value!,
-      }
-
-      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.upsertMediaMeterReading, params)
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.createMediaReading, {
+        p_payload,
+      })
 
       if (error) throw error
-      return await fetchMediaGroups(true)
+      return await fetchUserMediaData(true)
+    }
+
+    const updateMediaReading = async (p_payload: Partial<MediaReading>) => {
+      const supabase = useSupabaseClient()
+
+      const { error } = await supabase.rpc(SUPABASE_FUNCTIONS.updateMediaReading, {
+        p_payload,
+      })
+
+      if (error) throw error
+      return await fetchUserMediaData(true)
     }
 
     return {
@@ -185,12 +164,13 @@ export const useMediaTrackStore = defineStore(
       // Actions
       createMediaGroup,
       createMediaMeter,
+      createMediaReading,
       deleteMediaGroup,
       deleteMediaMeter,
-      fetchMediaGroups,
+      fetchUserMediaData,
       updateMediaGroup,
       updateMediaMeter,
-      upsertMediaMeterReading,
+      updateMediaReading,
     }
   },
   {

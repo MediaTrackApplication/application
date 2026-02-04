@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as z from 'zod'
 
 import type { FormSubmitEvent } from '@nuxt/ui'
@@ -51,27 +51,28 @@ const onSubmit = async (payload: FormSubmitEvent<Schema>) => {
 </script>
 
 <template>
-  <UAuthForm :fields :schema title="Welcome back" icon="i-lucide-lock" @submit="onSubmit">
+  <UAuthForm :fields :schema @submit="onSubmit" icon="i-lucide-lock" title="Welcome back">
     <template #description>
-      Don't have an account? <ULink to="/signup" class="font-medium text-primary">Sign up</ULink>.
+      Don't have an account? <ULink class="font-medium text-primary" to="/signup">Sign up</ULink>.
+      Don't have an account? <ULink class="font-medium text-primary" to="/">Sign up</ULink>.
     </template>
 
     <template #password-hint>
-      <ULink to="/" class="font-medium text-primary" tabindex="-1">Forgot password?</ULink>
+      <ULink class="font-medium text-primary" tabindex="-1" to="/">Forgot password?</ULink>
     </template>
 
     <template v-if="authError" #validation>
       <UAlert
         class="my-4"
+        :title="authError"
         color="error"
         icon="i-lucide-message-circle-warning"
-        :title="authError"
       />
     </template>
 
     <template #footer>
       By signing in, you agree to our
-      <ULink to="/" class="font-medium text-primary">Terms of Service</ULink>.
+      <ULink class="font-medium text-primary" to="/">Terms of Service</ULink>.
     </template>
   </UAuthForm>
 </template>

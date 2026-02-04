@@ -1,8 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as z from 'zod'
 
 import type { FormSubmitEvent } from '@nuxt/ui'
 import type { MediaGroup } from '~/types/media-group.type'
+
+const emits = defineEmits<{ close: [boolean] }>()
 
 const { mediaGroup = undefined } = defineProps<{
   mediaGroup?: MediaGroup
@@ -10,21 +12,22 @@ const { mediaGroup = undefined } = defineProps<{
 
 const mediaTrackStore = useMediaTrackStore()
 
+const schema = z.object({
+  default_reading_day: z
+    .number()
+    .min(1, 'Day must be between 1 and 31')
+    .max(31, 'Day must be between 1 and 31')
+    .default(10),
+  description: z.string().optional(),
+  is_default: z.boolean().optional(),
+  name: z.string().min(1, 'Name is required'),
+})
+
 const state = reactive({
   default_reading_day: mediaGroup?.default_reading_day ?? 10,
   description: mediaGroup?.description ?? '',
   is_default: mediaGroup?.is_default ?? false,
   name: mediaGroup?.name ?? '',
-})
-
-const schema = z.object({
-  default_reading_day: z
-    .number()
-    .min(1, 'Day must be between 1 and 31')
-    .max(31, 'Day must be between 1 and 31'),
-  description: z.string().optional(),
-  is_default: z.boolean().optional(),
-  name: z.string().min(1, 'Name is required'),
 })
 
 const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
@@ -44,18 +47,23 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
       is_default: payload.data.is_default,
       name: payload.data.name,
     })
+
+    emits('close', false)
   } else {
     await mediaTrackStore.createMediaGroup({
+      default_reading_day: payload.data.default_reading_day,
       description: payload.data.description,
       is_default: payload.data.is_default,
       name: payload.data.name,
     })
+
+    emits('close', false)
   }
 }
 </script>
 
 <template>
-  <UForm :schema :state class="space-y-4" @submit="onSubmit">
+  <UForm class="space-y-4" :schema :state @submit="onSubmit">
     <UPageCard :variant="mediaGroup ? 'outline' : 'naked'">
       <UFormField
         class="grid grid-cols-1 gap-2 md:grid-cols-2"
@@ -63,7 +71,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         label="Name"
         name="name"
       >
-        <UInput v-model="state.name" size="xl" required class="w-full" />
+        <UInput class="w-full" v-model="state.name" required size="xl" />
       </UFormField>
 
       <USeparator />
@@ -75,7 +83,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         name="description"
         size="lg"
       >
-        <UTextarea v-model="state.description" class="w-full" />
+        <UTextarea class="w-full" v-model="state.description" />
       </UFormField>
 
       <USeparator />
@@ -87,8 +95,8 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         name="default_reading_day"
       >
         <UInput
-          v-model="state.default_reading_day"
           class="w-full"
+          v-model="state.default_reading_day"
           max="31"
           min="1"
           required
@@ -100,21 +108,24 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
       <USeparator />
 
       <UFormField
+        class="grid grid-cols-1 gap-2 md:grid-cols-2"
         :help="
-          mediaTrackStore.isOneMediaGroup
+          mediaGroup?.id && mediaTrackStore.isOneMediaGroup
             ? 'Cannot disable default group when only one group exists.'
             : ''
         "
-        class="grid grid-cols-1 gap-2 md:grid-cols-2"
-        label="Set as default group"
         description="Specifies whether this media group should be automatically selected as the default."
+        label="Set as default group"
       >
-        <USwitch v-model="state.is_default" :disabled="mediaTrackStore.isOneMediaGroup" />
+        <USwitch
+          v-model="state.is_default"
+          :disabled="!!mediaGroup?.id && mediaTrackStore.isOneMediaGroup"
+        />
       </UFormField>
     </UPageCard>
 
     <div class="mt-4 flex justify-end">
-      <UButton color="neutral" trailing-icon="i-lucide-arrow-down-to-line" size="lg" type="submit">
+      <UButton color="neutral" size="lg" trailing-icon="i-lucide-arrow-down-to-line" type="submit">
         Save data
       </UButton>
     </div>

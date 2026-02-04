@@ -41,6 +41,6 @@ export default defineNuxtConfig({
       login: '/signin',
       saveRedirectToCookie: false,
     },
-    types: '~/types/database.types.ts',
+    types: '~/types/db.type.ts',
   },
 })

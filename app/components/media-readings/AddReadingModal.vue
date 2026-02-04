@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { MediaMeter } from '~/types/media-meter.type'
 import type { MediaReading } from '~/types/media-reading.type'
 
@@ -17,13 +17,14 @@ const title = computed(() =>
 </script>
 
 <template>
-  <UModal overlay :title :close="{ onClick: () => emits('close', false) }">
+  <UModal :close="{ onClick: () => emits('close', false) }" :title overlay>
     <slot />
 
     <template #body>
       <MediaReadingsMeterReadingForm
-        :media-meter-id="mediaMeter.id || ''"
+        :media-meter="mediaMeter"
         :media-reading="mediaReading"
+        @close="emits('close', false)"
       />
     </template>
   </UModal>

@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { MediaMeter } from '~/types/media-meter.type'
 
 const { mediaMeter = undefined, mediaMeterGroupId } = defineProps<{
@@ -11,7 +11,7 @@ const router = useRouter()
 
 const onSubmit = async () => {
   if (mediaMeter) {
-    await mediaTrackStore.deleteMediaMeter(mediaMeterGroupId, mediaMeter.id as string)
+    await mediaTrackStore.deleteMediaMeter(mediaMeter.id as string)
     router.push({ name: 'groups-groupId', params: { groupId: mediaMeterGroupId } })
   }
 }
@@ -27,11 +27,11 @@ const onSubmit = async () => {
   >
     <template #footer>
       <UButton
+        @click="onSubmit"
         color="error"
         label="Delete"
         size="lg"
         trailing-icon="i-lucide-diamond-minus"
-        @click="onSubmit"
       />
     </template>
   </UPageCard>

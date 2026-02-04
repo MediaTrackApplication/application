@@ -1,24 +1,18 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import { MEDIA_METER_CONFIG, type MediaMeterType } from '~/types/media-meter.type'
 
 import MediaMetersCreateModal from '~/components/media-meters/CreateModal.vue'
-import MediaReadingsAddReadingModal from '~/components/media-readings/AddReadingModal.vue'
 
 const mediaTrackStore = useMediaTrackStore()
 const overlay = useOverlay()
 
 const modalMeter = overlay.create(MediaMetersCreateModal)
-const modalReading = overlay.create(MediaReadingsAddReadingModal)
 
-const medisMeters = computed(() =>
+const mediaMeters = computed(() =>
   mediaTrackStore.getSelectedMediaGroupMeters?.map(group => ({
     ...group,
     color: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.color,
-    description: group.description,
     icon: MEDIA_METER_CONFIG[group.type as MediaMeterType]?.icon,
-    id: group.id,
-    title: group.name,
-    type: group.type,
   }))
 )
 </script>
@@ -40,17 +34,17 @@ const medisMeters = computed(() =>
 
       <UPageGrid class="grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
         <UPageCard
-          icon="i-lucide-diamond"
-          :ui="{ leadingIcon: 'text-black' }"
           :title="mediaTrackStore.getSelectedMediaGroup?.name"
-          spotlight-color="neutral"
+          :ui="{ leadingIcon: 'text-black' }"
+          icon="i-lucide-diamond"
           spotlight
+          spotlight-color="neutral"
         >
           <template #description>
             <p class="inline-flex">
               Default reading day:
 
-              <UBadge color="neutral" size="md" class="ml-2">
+              <UBadge class="ml-2" color="neutral" size="md">
                 {{ mediaTrackStore.getSelectedMediaGroup?.default_reading_day || '10' }}
               </UBadge>
             </p>
@@ -59,22 +53,22 @@ const medisMeters = computed(() =>
           <template #footer>
             <div class="flex gap-2">
               <UButton
+                :to="{
+                  name: 'groups-groupId',
+                  params: { groupId: mediaTrackStore.getSelectedMediaGroup?.id },
+                }"
                 color="neutral"
                 icon="i-lucide-diamond"
                 label="edit group"
                 size="sm"
                 variant="outline"
-                :to="{
-                  name: 'groups-groupId',
-                  params: { groupId: mediaTrackStore.getSelectedMediaGroup?.id },
-                }"
               />
 
               <UButton
                 color="neutral"
                 icon="i-lucide-notebook-pen"
-                size="sm"
                 label="add group readings"
+                size="sm"
               />
             </div>
           </template>
@@ -84,67 +78,26 @@ const medisMeters = computed(() =>
       <USeparator class="my-8" icon="i-lucide-arrow-down-from-line" />
 
       <UPageGrid
-        v-if="mediaTrackStore.getSelectedMediaGroupMeters?.length"
         class="grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"
+        v-if="mediaTrackStore.getSelectedMediaGroupMeters?.length"
       >
-        <UPageCard
-          v-for="(card, index) in medisMeters"
+        <MediaMetersCard
+          v-for="(mediaMeter, index) in mediaMeters"
           :key="index"
-          :spotlight-color="card.color"
-          :ui="{ leadingIcon: 'text-' + card.color }"
-          spotlight
-          v-bind="card"
-          variant="subtle"
-        >
-          <template #title>
-            <span class="text-xl">
-              {{ card.title }}
-              <span class="text-sm text-gray-400">measured in </span>
-              <span class="text-md text-gray-400">{{
-                MEDIA_METER_CONFIG[card.type as MediaMeterType]?.unit
-              }}</span>
-            </span>
-          </template>
-
-          <template #footer>
-            <div class="flex gap-2">
-              <UButton
-                :color="card.color"
-                icon="i-lucide-circle-gauge"
-                label="manage meter"
-                size="sm"
-                variant="outline"
-                :to="{
-                  name: 'groups-groupId-meters-meterId',
-                  params: {
-                    groupId: mediaTrackStore.getSelectedMediaGroup?.id,
-                    meterId: card.id,
-                  },
-                }"
-              />
-
-              <UButton
-                :color="card.color"
-                icon="i-lucide-notebook-pen"
-                label="add meters reading"
-                size="sm"
-                @click="modalReading.open({ mediaMeter: card })"
-              />
-            </div>
-          </template>
-        </UPageCard>
+          :media-meter="mediaMeter"
+        />
 
         <div class="flex h-full items-center justify-center">
           <UTooltip text="add new meter to the group">
             <UButton
-              color="neutral"
-              icon="i-lucide-circle-gauge"
-              size="xl"
               @click="
                 modalMeter.open({
                   mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
                 })
               "
+              color="neutral"
+              icon="i-lucide-circle-gauge"
+              size="xl"
             />
           </UTooltip>
         </div>
@@ -157,17 +110,19 @@ const medisMeters = computed(() =>
         title="Heads up!"
         variant="subtle"
       >
-        <UButton
-          color="neutral"
-          icon="i-lucide-circle-gauge"
-          label="add your first meter"
-          size="sm"
-          @click="
-            modalMeter.open({
-              mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
-            })
-          "
-        />
+        <template #actions>
+          <UButton
+            @click="
+              modalMeter.open({
+                mediaMeterGroupId: mediaTrackStore.getSelectedMediaGroup?.id || '',
+              })
+            "
+            color="neutral"
+            icon="i-lucide-circle-gauge"
+            label="add your first meter"
+            size="sm"
+          />
+        </template>
       </UAlert>
     </template>
   </UDashboardPanel>

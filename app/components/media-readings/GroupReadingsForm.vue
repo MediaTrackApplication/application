@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import * as z from 'zod'
 
 import type { FormSubmitEvent } from '@nuxt/ui'
@@ -37,25 +37,15 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
     )
       return
 
-    await mediaTrackStore.updateMediaGroup({
-      default_reading_day: payload.data.default_reading_day,
-      description: payload.data.description,
-      id: mediaGroup.id,
-      is_default: payload.data.is_default,
-      name: payload.data.name,
-    })
+    await mediaTrackStore.updateMediaReading({})
   } else {
-    await mediaTrackStore.createMediaGroup({
-      description: payload.data.description,
-      is_default: payload.data.is_default,
-      name: payload.data.name,
-    })
+    await mediaTrackStore.createMediaReading({})
   }
 }
 </script>
 
 <template>
-  <UForm :schema :state class="space-y-4" @submit="onSubmit">
+  <UForm class="space-y-4" :schema :state @submit="onSubmit">
     <UPageCard :variant="mediaGroup ? 'outline' : 'naked'">
       <UFormField
         class="grid grid-cols-1 gap-2 md:grid-cols-2"
@@ -63,7 +53,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         label="Name"
         name="name"
       >
-        <UInput v-model="state.name" size="xl" required class="w-full" />
+        <UInput class="w-full" v-model="state.name" required size="xl" />
       </UFormField>
 
       <USeparator />
@@ -75,7 +65,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         name="description"
         size="lg"
       >
-        <UTextarea v-model="state.description" class="w-full" />
+        <UTextarea class="w-full" v-model="state.description" />
       </UFormField>
 
       <USeparator />
@@ -87,8 +77,8 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
         name="default_reading_day"
       >
         <UInput
-          v-model="state.default_reading_day"
           class="w-full"
+          v-model="state.default_reading_day"
           max="31"
           min="1"
           required
@@ -100,21 +90,21 @@ const onSubmit = async (payload: FormSubmitEvent<MediaGroup>) => {
       <USeparator />
 
       <UFormField
+        class="grid grid-cols-1 gap-2 md:grid-cols-2"
         :help="
           mediaTrackStore.isOneMediaGroup
             ? 'Cannot disable default group when only one group exists.'
             : ''
         "
-        class="grid grid-cols-1 gap-2 md:grid-cols-2"
-        label="Set as default group"
         description="Specifies whether this media group should be automatically selected as the default."
+        label="Set as default group"
       >
         <USwitch v-model="state.is_default" :disabled="mediaTrackStore.isOneMediaGroup" />
       </UFormField>
     </UPageCard>
 
     <div class="mt-4 flex justify-end">
-      <UButton color="neutral" trailing-icon="i-lucide-arrow-down-to-line" size="lg" type="submit">
+      <UButton color="neutral" size="lg" trailing-icon="i-lucide-arrow-down-to-line" type="submit">
         Save data
       </UButton>
     </div>

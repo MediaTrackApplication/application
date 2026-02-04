@@ -56,10 +56,11 @@ export const MEDIA_METER_CONFIG = {
 export type MediaMeterType = keyof typeof MEDIA_METER_TYPES
 
 export interface MediaMeter {
+  color?: 'error' | 'warning' | 'info' | 'primary' | 'secondary' | 'success' | 'neutral'
   description?: string
   group_id?: string
   id?: string
-  name: string
-  type: MediaMeterType | string
-  unit: string
+  name?: string
+  type?: MediaMeterType | string
+  unit?: string
 }

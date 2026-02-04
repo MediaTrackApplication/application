@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import MediaGroupsCreateModal from '~/components/media-groups/CreateModal.vue'
 
 const mediaTrackStore = useMediaTrackStore()
@@ -35,22 +35,22 @@ const mediaGroups = computed(() =>
 
     <template #body>
       <UPageSection
-        title="your media groups"
         description="manage media groups assigned to your account."
+        title="your media groups"
       >
         <template #links>
           <UButton
+            @click="modal.open()"
             color="neutral"
             icon="i-lucide-grid-2x2-plus"
-            size="xl"
             label="create new media group"
-            @click="modal.open()"
+            size="xl"
           />
         </template>
       </UPageSection>
 
       <UPageGrid class="grid-cols-2 gap-4 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
-        <UPageCard v-for="(card, index) in mediaGroups" :key="index" v-bind="card" spotlight>
+        <UPageCard v-bind="card" v-for="(card, index) in mediaGroups" :key="index" spotlight>
           <template #default>
             <div class="inline-flex gap-2">
               <UBadge v-if="mediaTrackStore.getSelectedMediaGroup?.id === card?.id" color="warning">

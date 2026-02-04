@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui'
 import * as z from 'zod'
 
@@ -6,6 +6,8 @@ import type { MediaMeter, MediaMeterType } from '~/types/media-meter.type'
 import { MEDIA_METER_CONFIG, MEDIA_METER_TYPES } from '~/types/media-meter.type'
 
 const mediaTrackStore = useMediaTrackStore()
+
+const emits = defineEmits<{ close: [boolean] }>()
 
 const { mediaMeter = undefined, mediaMeterGroupId } = defineProps<{
   mediaMeter?: MediaMeter
@@ -58,20 +60,24 @@ const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
       type: payload.data.type,
       unit: payload.data.unit,
     })
+
+    emits('close', false)
   } else {
     await mediaTrackStore.createMediaMeter({
-      group_id: mediaMeterGroupId,
       description: payload.data.description,
+      group_id: mediaMeterGroupId,
       name: payload.data.name,
       type: payload.data.type,
       unit: payload.data.unit,
     })
+
+    emits('close', false)
   }
 }
 </script>
 
 <template>
-  <UForm :schema :state class="space-y-4" @submit="onSubmit">
+  <UForm class="space-y-4" :schema :state @submit="onSubmit">
     <UPageCard :variant="mediaMeter ? 'outline' : 'naked'">
       <UFormField
         class="grid grid-cols-1 gap-2 md:grid-cols-2"
@@ -79,7 +85,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
         label="Name"
         name="name"
       >
-        <UInput v-model="state.name" size="xl" class="w-full" />
+        <UInput class="w-full" v-model="state.name" size="xl" />
       </UFormField>
 
       <USeparator />
@@ -91,7 +97,7 @@ const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
         name="description"
         size="lg"
       >
-        <UTextarea v-model="state.description" class="w-full" />
+        <UTextarea class="w-full" v-model="state.description" />
       </UFormField>
 
       <USeparator />
@@ -103,13 +109,13 @@ const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
         name="type"
       >
         <USelect
-          v-model="state.type"
-          :items
-          :icon
-          size="xl"
-          placeholder="Select meter type"
           class="w-full"
+          v-model="state.type"
+          :icon
+          :items
           @change="setUnit"
+          placeholder="Select meter type"
+          size="xl"
         />
       </UFormField>
 
@@ -122,16 +128,16 @@ const onSubmit = async (payload: FormSubmitEvent<MediaMeter>) => {
         name="unit"
       >
         <UInput
-          v-model="state.unit"
-          size="xl"
-          :disabled="state.type !== MEDIA_METER_TYPES.other"
           class="w-full"
+          v-model="state.unit"
+          :disabled="state.type !== MEDIA_METER_TYPES.other"
+          size="xl"
         />
       </UFormField>
     </UPageCard>
 
     <div class="mt-8 flex gap-4">
-      <UButton trailing-icon="i-lucide-arrow-down-to-line" color="neutral" type="submit" size="lg">
+      <UButton color="neutral" size="lg" trailing-icon="i-lucide-arrow-down-to-line" type="submit">
         Save data
       </UButton>
     </div>

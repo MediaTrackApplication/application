@@ -1,8 +1,8 @@
-<script setup lang="ts"></script>
+<script lang="ts" setup></script>
 
 <template>
   <UMain class="flex h-screen items-center justify-center px-4">
-    <UPageCard variant="subtle" class="w-full max-w-md">
+    <UPageCard class="w-full max-w-md" variant="subtle">
       <slot />
     </UPageCard>
   </UMain>

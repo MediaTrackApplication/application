@@ -1,4 +1,4 @@
-<script setup lang="ts">
+<script lang="ts" setup>
 import type { TabsItem } from '@nuxt/ui'
 
 definePageMeta({
@@ -57,8 +57,8 @@ const items: TabsItem[] = [
         <UTabs :items="items" color="neutral">
           <template #base>
             <MediaMetersBaseForm
-              :media-meter-group-id="mediaGroup?.id || ''"
               :media-meter="mediaMeter"
+              :media-meter-group-id="mediaGroup?.id || ''"
             />
           </template>
 
@@ -66,8 +66,8 @@ const items: TabsItem[] = [
 
           <template #danger-zone>
             <MediaMetersDangerZoneForm
-              :media-meter-group-id="mediaGroup?.id || ''"
               :media-meter="mediaMeter"
+              :media-meter-group-id="mediaGroup?.id || ''"
             />
           </template>
         </UTabs>
